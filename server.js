@@ -1,6 +1,6 @@
 'use strict';
 
-console.log('hello my bitches');
+console.log('hello people');
 
 const express = require('express');
 
@@ -11,7 +11,7 @@ const PORT = 3002
 const weatherData = require('./data/weather.json');
 
 app.get('/', (request, response) => {
-  response.send('hello, from our server, bitches');
+  response.send('hello, from our server');
 })
 
 app.get('/throw-an-error', (request, response) => {
