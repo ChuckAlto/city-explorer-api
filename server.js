@@ -6,7 +6,13 @@ const express = require('express');
 
 const app = express();
 
-const PORT = 3002
+require('dotenv').config();
+
+const PORT = process.env.PORT || 3002;
+
+let cors = require('cors');
+
+app.use(cors());
 
 const weatherData = require('./data/weather.json');
 
@@ -21,27 +27,33 @@ app.get('/throw-an-error', (request, response) => {
 
 
 app.get('/weather', (request, response) => {
-  let city_name = request.query.city_name;
-  console.log(city_name);
-  response.send(weatherData.filter(weather => weather.city_name === city_name).map(weather => new Weather(weather)));
+  let searchQuery = request.query.searchQuery;
+  console.log(searchQuery);
+  let city = (weatherData.filter(cityWeather => cityWeather.city_name.toLowerCase() === searchQuery));
+  try {
+    let cityTwo = city[0].data.map(weather => new Forecast(weather));
+    console.log(city);
+    console.log(cityTwo);
+    response.send(cityTwo);
+  } catch (error){
+      response.status(404).send('pick another city')
+  }
 });
 
 
 
+ 
 
 
 
 
-app.get('*', (request, response) => {
-  response.status(404).send('this is not a place.')
-})
-
-
-class Weather {
+class Forecast {
   constructor(weather){
-    this.city_name=weather.city_name;
-    this.lat=weather.lat;
-    this.lon=weather.lon;
+
+    this.description = weather.weather.description;
+    this.date = weather.valid_date;
+    
+
   }
 }
 
