@@ -17,7 +17,7 @@ app.use(cors());
 const weatherData = require('./data/weather.json');
 
 app.get('/', (request, response) => {
-  response.send('hello, from our server');
+  response.send('hello, from this here server server');
 })
 
 app.get('/throw-an-error', (request, response) => {
