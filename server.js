@@ -14,44 +14,40 @@ let cors = require('cors');
 
 app.use(cors());
 
-const weatherData = require('./data/weather.json');
-
-app.get('/', (request, response) => {
-  response.send('hello, from this here server');
-})
-
-app.get('/throw-an-error', (request, response) => {
-
-  throw 'you not good!'
-})
+// const weatherData = require('./data/weather.json');
+const axios = require('axios');
 
 
-app.get('/weather', (request, response) => {
-  let searchQuery = request.query.searchQuery;
-  console.log(searchQuery);
-  let city = (weatherData.filter(cityWeather => cityWeather.city_name.toLowerCase() === searchQuery));
+
+
+app.get('/weather', async (request, response) => {
+  let lat = request.query.lat;
+  let lon = request.query.lon;
+  console.log(lat, lon);
+  // console.log(weatherData);
+  let url = `https://api.weatherbit.io/v2.0/forecast/daily?&lat=${lat}&lon=${lon}&key=${process.env.WEATHER_API_KEY}&days=5&lan=en&units=I`
+  // let filteredCity = (weatherData.filter(cityWeather => cityWeather.city_name === searchQuery));
+  console.log(url)
   try {
-    let cityTwo = city[0].data.map(weather => new Forecast(weather));
-    console.log(city);
-    console.log(cityTwo);
-    response.send(cityTwo);
+    const weatherResults = await axios.get(url)
+    
+    let groomedWeather = weatherResults.data.data.map(day => new Forecast(day));
+    console.log(groomedWeather);
+    response.send(groomedWeather);
   } catch (error){
-      response.status(404).send('pick another city')
+    response.status(404).send('pick another city')
   }
+  // console.log(city);
+
 });
 
-
-
- 
-
-
-
-
 class Forecast {
-  constructor(weather){
+  constructor(day){
 
-    this.description = weather.weather.description;
-    this.date = weather.valid_date;
+    this.description = day.weather.description;
+    this.date = day.valid_date;
+    this.max_temp = day.max_temp;
+    this.min_temp = day.min_temp;
     
 
   }
