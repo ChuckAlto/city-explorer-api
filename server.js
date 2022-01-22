@@ -17,6 +17,12 @@ app.use(cors());
 // const weatherData = require('./data/weather.json');
 const axios = require('axios');
 
+const getWeather = require('./weather');
+const getMovies = require('./movies');
+
+// app.get('/weather', getWeather)
+
+// app.get('/movies,', getMovies);
 
 
 
